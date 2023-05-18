@@ -20,7 +20,7 @@ class SlackBot extends Adapter
   ###
   constructor: (robot, @options) ->
     super robot
-    @robot robot
+    @robot = robot
     @robot.logger.info "hubot-slack adapter v#{pkg.version}"
     @client = new SlackClient @options, @robot
 
