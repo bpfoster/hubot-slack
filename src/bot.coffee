@@ -18,8 +18,9 @@ class SlackBot extends Adapter
   # @param {Object} options.rtm - RTM configuration options for SlackClient
   # @param {Object} options.rtmStart - options for `rtm.start` Web API method
   ###
-  constructor: (@robot, @options) ->
-    super @robot
+  constructor: (robot, @options) ->
+    super robot
+    @robot robot
     @robot.logger.info "hubot-slack adapter v#{pkg.version}"
     @client = new SlackClient @options, @robot
 

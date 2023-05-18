@@ -17,8 +17,9 @@ class ReactionMessage extends Message
   # custom integration (not part of a Slack app with a bot user), then this value will be undefined.
   # @param {string} event_ts - A String of the reaction event timestamp.
   ###
-  constructor: (@type, @user, @reaction, @item_user, @item, @event_ts) ->
-    super @user
+  constructor: (@type, user, @reaction, @item_user, @item, @event_ts) ->
+    super user
+    @user = user
     @type = @type.replace("reaction_", "")
     
 class FileSharedMessage extends Message
@@ -31,8 +32,9 @@ class FileSharedMessage extends Message
   # @param {string} file_id - A String identifying the file_id of the file that was shared.
   # @param {string} event_ts - A String of the file_shared event timestamp.
   ###
-  constructor: (@user, @file_id, @event_ts) ->
-    super @user
+  constructor: (user, @file_id, @event_ts) ->
+    super user
+    @user = user
 
 class MeMessage extends TextMessage
 
@@ -44,8 +46,11 @@ class MeMessage extends TextMessage
   # @param {string} text - Text of the /me message
   # @param {string} event_ts - event timestamp
   ###
-  constructor: (@user, @text, @event_ts) ->
-    super @user, @text, @event_ts
+  constructor: (user, text, event_ts) ->
+    super user, text, event_ts
+    @user = user
+    @text = text
+    @event_ts = event_ts
 
 class PresenceMessage extends Message
 
@@ -92,7 +97,11 @@ class SlackTextMessage extends TextMessage
   # @param {string} robot_name - The Slack username for this robot
   # @param {string} robot_alias - The alias for this robot
   ###
-  constructor: (@user, @text, rawText, @rawMessage, channel_id, robot_name, robot_alias) ->
+  constructor: (user, text, rawText, rawMessage, channel_id, robot_name, robot_alias) ->
+    super user, text, rawMessage.ts
+    @user = user
+    @text = text
+    @rawMessage = rawMessage
     # private instance properties
     @_channel_id = channel_id
     @_robot_name = robot_name
@@ -102,8 +111,6 @@ class SlackTextMessage extends TextMessage
     @rawText = rawText || @rawMessage.text
     @thread_ts = @rawMessage.thread_ts if @rawMessage.thread_ts?
     @mentions = []
-
-    super @user, @text, @rawMessage.ts
 
   ###*
   # Build the text property, a flat string representation of the contents of this message.
