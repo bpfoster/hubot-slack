@@ -140,7 +140,7 @@ class SlackBot extends Adapter
   # Slack client has opened the connection
   # @private
   ###
-  open: =>
+  open: ->
     @robot.logger.info "Connected to Slack RTM"
 
     # Tell Hubot we're connected so it can load scripts
@@ -153,7 +153,7 @@ class SlackBot extends Adapter
   # @param {SlackRtmStart|SlackRtmConnect} identity - the response from calling the Slack Web API method `rtm.start` or
   # `rtm.connect`
   ###
-  authenticated: (identity) =>
+  authenticated: (identity) ->
     {@self, team} = identity
     @self.installed_team_id = team.id
 
@@ -179,7 +179,7 @@ class SlackBot extends Adapter
   # Creates a presense subscripton for all users in the brain
   # @private
   ###
-  presenceSub: =>
+  presenceSub: ->
     # Only subscribe to status changes from human users that are not deleted
     ids = for own id, user of @robot.brain.data.users when (not user.is_bot and not user.deleted)
       id
@@ -190,7 +190,7 @@ class SlackBot extends Adapter
   # Slack client has closed the connection
   # @private
   ###
-  close: =>
+  close: ->
     # NOTE: not confident that @options.autoReconnect works
     if @options.autoReconnect
       @robot.logger.info "Disconnected from Slack RTM"
@@ -202,7 +202,7 @@ class SlackBot extends Adapter
   # Slack client has closed the connection and will not reconnect
   # @private
   ###
-  disconnect: =>
+  disconnect: ->
     @robot.logger.info "Disconnected from Slack RTM"
     @robot.logger.info "Exiting..."
     @client.disconnect()
@@ -216,7 +216,7 @@ class SlackBot extends Adapter
   # @private
   # @param {SlackRtmError} error - An error emitted from the [Slack RTM API](https://api.slack.com/rtm)
   ###
-  error: (error) =>
+  error: (error) ->
     @robot.logger.error "Slack RTM error: #{JSON.stringify error}"
     # Assume that scripts can handle slowing themselves down, all other errors are bubbled up through Hubot
     # NOTE: should rate limit errors also bubble up?
@@ -240,7 +240,7 @@ class SlackBot extends Adapter
   # @param {string} [event.channel] - the conversation ID for where this event took place
   # @param {SlackBotInfo} [event.bot] - the description of the bot creating this event as returned by `bots.info`
   ###
-  eventHandler: (event) =>
+  eventHandler: (event) ->
     {user, channel} = event
     event_team_id = event.team
 
@@ -347,7 +347,7 @@ class SlackBot extends Adapter
   # @param {Error} [error] - describes an error that occurred while fetching users
   # @param {SlackUsersList} [res] - the response from the Slack Web API method `users.list`
   ###
-  usersLoaded: (err, res) =>
+  usersLoaded: (err, res) ->
     if err || !res.members.length
       @robot.logger.error "Can't fetch users"
       return
