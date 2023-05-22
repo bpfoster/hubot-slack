@@ -1,4 +1,4 @@
-{Message, TextMessage}  = require.main.require "hubot"
+{Message, TextMessage}  = require.main.require "hubot/es2015"
 SlackClient             = require "./client"
 SlackMention            = require "./mention"
 Promise                 = require "bluebird"

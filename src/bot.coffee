@@ -1,4 +1,4 @@
-{Adapter, TextMessage, EnterMessage, LeaveMessage, TopicMessage, CatchAllMessage}  = require.main.require "hubot"
+{Adapter, TextMessage, EnterMessage, LeaveMessage, TopicMessage, CatchAllMessage}  = require.main.require "hubot/es2015"
 {SlackTextMessage, ReactionMessage, PresenceMessage, FileSharedMessage, MeMessage} = require "./message"
 SlackClient                                                                        = require "./client"
 pkg                                                                                = require "../package"
@@ -39,12 +39,12 @@ class SlackBot extends Adapter
     return @robot.logger.error "Invalid token provided, please follow the upgrade instructions" unless (@options.token.substring(0, 5) in ["xoxb-", "xoxp-"])
 
     # SlackClient event handlers
-    @client.rtm.on "open", @open
-    @client.rtm.on "close", @close
-    @client.rtm.on "disconnect", @disconnect
-    @client.rtm.on "error", @error
-    @client.rtm.on "authenticated", @authenticated
-    @client.onEvent @eventHandler
+    @client.rtm.on "open", @open.bind(this)
+    @client.rtm.on "close", @close.bind(this)
+    @client.rtm.on "disconnect", @disconnect.bind(this)
+    @client.rtm.on "error", @error.bind(this)
+    @client.rtm.on "authenticated", @authenticated.bind(this)
+    @client.onEvent @eventHandler.bind(this)
 
     # TODO: set this to false as soon as RTM connection closes (even if reconnect will happen later)
     # TODO: check this value when connection finishes (even if its a reconnection)
@@ -52,7 +52,7 @@ class SlackBot extends Adapter
     @needsUserListSync = true
     unless @options.disableUserSync
       # Synchronize workspace users to brain
-      @client.loadUsers @usersLoaded
+      @client.loadUsers @usersLoaded.bind(this)
     else
       @brainIsLoaded = true
 
@@ -68,11 +68,11 @@ class SlackBot extends Adapter
         # NOTE: is this actually true? won't the brain have the users in memory and persist to storage as soon as the
         # connection is complete?
         # NOTE: this seems wasteful. when there is brain storage, it will end up loading all the users twice.
-        @client.loadUsers @usersLoaded
+        @client.loadUsers @usersLoaded.bind(this)
         @isLoaded = true
         # NOTE: will this only subscribe a partial user list because loadUsers has not yet completed? it will at least
         # subscribe to the users that were stored in the brain from the last run.
-        @presenceSub()
+        @presenceSub.bind(this)()
 
     # Start logging in
     @client.connect()
